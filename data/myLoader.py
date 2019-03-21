@@ -77,32 +77,36 @@ class LoadDataset(Dataset):
 		"""
 		
 		with open(self.data_path) as file:
-			reader = csv.reader(file, delimiter='\t')
-			source_ids = []
-			target_ids = []
-			for row in reader:
-				#print (tuple(self.sp.EncodeAsIds(row[i]) for i, col in enumerate(self.cols)))
-				source = row[0]
-				target = row[1]
-				source_id = []
-				target_id = []
-				for word in source.split(' '):
-					single_word_id = self.ditionary.word2id.get(word)
-					if single_word_id != None:
-						source_id.append(single_word_id)
-					else:
-						source_id.append(self.ditionary.word2id.get('UNK'))
-				for word in target.split(' '):
-					single_word_id = self.ditionary.word2id.get(word)
-					if single_word_id != None:
-						target_id.append(single_word_id)
-					else:
-						target_id.append(self.ditionary.word2id.get('UNK'))
-				source_ids.append(source_id)
-				target_ids.append(target_id)
+                        reader = csv.reader(file, delimiter='\t')
+                        source_ids = []
+                        target_ids = []
+                        for row in reader:
+                                try:
+                                        #pdb.set_trace()
+                                        source = row[0]
+                                        target = row[1]
+                                except:
+                                        print (1)
+                                        continue
+                                source_id = []
+                                target_id = []
+                                for word in source.split(' '):
+                                        single_word_id = self.ditionary.word2id.get(word)
+                                        if single_word_id != None:
+                                                source_id.append(single_word_id)
+                                        else:
+                                                source_id.append(self.ditionary.word2id.get('UNK'))
+                                for word in target.split(' '):
+                                        single_word_id = self.ditionary.word2id.get(word)
+                                        if single_word_id != None:
+                                                target_id.append(single_word_id)
+                                        else:
+                                                target_id.append(self.ditionary.word2id.get('UNK'))
+                                source_ids.append(source_id)
+                                target_ids.append(target_id)
 
 
-		return tuple([np.array(source_ids),np.array(target_ids)])
+                        return tuple([np.array(source_ids),np.array(target_ids)])
 	def decode(self, outputs,id2word_dic):
             decoded_sentences = []
             decoded_ids = []
@@ -132,10 +136,12 @@ def create_dict(data_path):
 	with open(data_path) as f:
 		reader = csv.reader(f, delimiter='\t')
 		for row in reader:
-			
+                            try:
 			#pdb.set_trace()
-			texts.append(row[0])
-			texts.append(row[1])
+                                    texts.append(row[0])
+                                    texts.append(row[1])
+                            except:
+                                    print (row)
 	#pdb.set_trace()
 	frequency = defaultdict(int)
 	for text in texts: 

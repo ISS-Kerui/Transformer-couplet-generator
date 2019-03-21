@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser(description=description, epilog=epilog,
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--dataset', metavar='DIR', type=str, default='./dataset', help='dataset directory')
 parser.add_argument('--cuda', action='store_true', help='whether to use cuda')
-parser.add_argument('--vocab_size', metavar='V', type=int, default=4300, help='vocabulary size')
+parser.add_argument('--vocab_size', metavar='V', type=int, default=4000, help='vocabulary size')
 parser.add_argument('--pretrain_emb', action='store_true', help='use pretrained embeddings')
 parser.add_argument('--emb_size', metavar='E', type=int, default=768, help='embedding size')
 parser.add_argument('--model_dim', metavar='MD', type=int, default=768, help='dimension of the model')
@@ -38,7 +38,7 @@ parser.add_argument('--sample_interval', metavar='S', type=int, default=100, hel
 parser.add_argument('--train_interval', metavar='TL', type=int, default=100, help='train log interval')
 parser.add_argument('--train_sample_interval', metavar='TS', type=int, default=500, help='train sample interval')
 parser.add_argument('--log', metavar='L', type=str, default='./logs', help='logs directory')
-parser.add_argument('--prefix', metavar='TP', type=str, default='simple-summ', help='model prefix')
+parser.add_argument('--prefix', metavar='TP', type=str, default='gen', help='model prefix')
 parser.add_argument('--saved_model', type=str, default=None, help='saved model name')
 args = parser.parse_args()
 
@@ -86,7 +86,7 @@ logging.info('Loading dataset')
 #loader = DataLoader(args.dataset, ['train', 'test'], ['src', 'trg'], bpe_model_filename)
 train_loader = LoadDataset('./dataset/train.tsv',dic)
 test_loader = LoadDataset('./dataset/test.tsv',dic)
-m_args = {'max_seq_len': 30, 'vocab_size': vocab_size,
+m_args = {'max_seq_len':50, 'vocab_size': vocab_size,
           'n_layers': args.n_layers, 'emb_size': emb_size, 'dim_m': args.model_dim, 'n_heads': args.n_heads,
           'dim_i': args.inner_dim, 'dropout': args.dropout, 'embedding_weights': embeddings}
 
@@ -117,10 +117,14 @@ for i in range(args.epoch):
         loss_sum = 0.
         for i in progress_bar:
             sources, summaries = next(batch_iterator)
-            sources = np.array(list(sources))
-            summaries = np.array(list(summaries))
+            sources = np.array([np.array(s) for s in sources])
+            summaries = np.array([np.array(s) for s in summaries])
             sources = torch.from_numpy(sources)
-            summaries = torch.from_numpy(summaries)
+            try:
+                summaries = torch.from_numpy(summaries)
+            except:
+                print (summaries)
+                continue
             #sources, summaries = Variable(sources,requires_grad=True), Variable(summaries)
             sources, summaries = sources.to(device), summaries.to(device)
             loss, seq = model.train_step([sources,summaries],optimizer)
