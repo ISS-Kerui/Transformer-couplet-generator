@@ -26,25 +26,8 @@ train_filename = os.path.join(args.dataset, 'train.tsv')
 test_filename = os.path.join(args.dataset, 'test.tsv')
 sp_model_prefix = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe')
 sp_model_filename = sp_model_prefix + '.model'
-w2v_model_filename = os.path.join('./models_dumps', args.prefix, 'word2vec.model')
-embeddings_filename = os.path.join('./models_dumps', args.prefix, 'embedding.npy')
+embeddings_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words.npy')
 
-# for path in [sp_model_filename, w2v_model_filename, embeddings_filename]:
-#     os.makedirs(os.path.dirname(path), exist_ok=True)
-
-# # Start tokenization training:
-#spm_params = '--pad_id=0 --unk_id=1 --bos_id=2 --eos_id=3 ' \
-#             '--input={} --model_prefix={} --vocab_size={}'.format(train_filename, sp_model_prefix, args.vocab_size)
-#spm.SentencePieceTrainer.Train(spm_params)
-
-# # Load trained sentencepice model:
-# sp = spm.SentencePieceProcessor()
-# sp.load(sp_model_filename)
-
-# # Next, train word2vec embeddings:
-# sentences = SequentialSentenceLoader(train_filename, sp)
-# w2v_model = Word2Vec(sentences, min_count=0, workers=args.workers, size=args.emb_size, sg=int(args.sg))
-# w2v_model.save(w2v_model_filename)
 
 #Next , using BERT embeddings:
 from bert_serving.client import BertClient
@@ -56,7 +39,7 @@ for word in words:
 	encoded_word = bc.encode([word])
 	encoded_words.append(encoded_word)
 encoded_words = np.array(encoded_words).squeeze()
-np.save('embedded_words.npy',encoded_words)
+np.save(embeddings_filename,encoded_words)
 
 
 
