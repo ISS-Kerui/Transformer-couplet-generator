@@ -132,24 +132,25 @@ def collate_fn(batch):
 	return source, summary
 
 def create_dict(data_path):
-	texts = []
-	with open(data_path) as f:
-		reader = csv.reader(f, delimiter='\t')
-		for row in reader:
-                            try:
+        texts = []
+        with open(data_path) as f:
+                reader = csv.reader(f, delimiter='\t')
+                for row in reader:
+                        try:
 			#pdb.set_trace()
-                                    texts.append(row[0])
-                                    texts.append(row[1])
-                            except:
-                                    print (row)
+                                texts.append(row[0])
+                                texts.append(row[1])
+                        except:
+                                print (row)
 	#pdb.set_trace()
-	frequency = defaultdict(int)
-	for text in texts: 
-		for token in text: 
-			frequency[token] += 1 
-	texts = [[token for token in text if frequency[token] > 50] for text in texts]
-	dic = MyDict(texts)
-	return dic
+        frequency = defaultdict(int)
+        for text in texts: 
+                for token in text.split():
+                        frequency[token] += 1 
+        texts = [[token for token in text.split() if frequency[token] > 10] for text in texts]
+        dic = MyDict(texts)
+        print (len(dic))
+        return dic
 
 from torch.utils.data import DataLoader
 import pdb

@@ -22,8 +22,8 @@ parser.add_argument('--prefix', metavar='P', type=str, default='gen', help='mode
 
 args = parser.parse_args()
 
-train_filename = os.path.join(args.dataset, 'peotry_train.tsv')
-test_filename = os.path.join(args.dataset, 'peotry_test.tsv')
+train_filename = os.path.join(args.dataset, 'poetry_train.tsv')
+test_filename = os.path.join(args.dataset, 'poetry_test.tsv')
 sp_model_prefix = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe')
 sp_model_filename = sp_model_prefix + '.model'
 embeddings_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words_poetry.npy')
@@ -36,8 +36,8 @@ words = dic.word2id.keys()
 bc = BertClient()
 encoded_words = []
 for word in words:
-	encoded_word = bc.encode([word])
-	encoded_words.append(encoded_word)
+        encoded_word = bc.encode([word])
+        encoded_words.append(encoded_word)
 encoded_words = np.array(encoded_words).squeeze()
 np.save(embeddings_filename,encoded_words)
 

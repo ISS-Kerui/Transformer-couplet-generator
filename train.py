@@ -25,7 +25,7 @@ parser.add_argument('--vocab_size', metavar='V', type=int, default=4000, help='v
 parser.add_argument('--pretrain_emb', action='store_true', help='use pretrained embeddings')
 parser.add_argument('--emb_size', metavar='E', type=int, default=768, help='embedding size')
 parser.add_argument('--model_dim', metavar='MD', type=int, default=768, help='dimension of the model')
-parser.add_argument('--n_layers', metavar='NL', type=int, default=1, help='number of transformer layers')
+parser.add_argument('--n_layers', metavar='NL', type=int, default=2, help='number of transformer layers')
 parser.add_argument('--n_heads', metavar='NH', type=int, default=8, help='number of attention heads')
 parser.add_argument('--inner_dim', metavar='ID', type=int, default=768, help='dimension of position-wise sublayer')
 parser.add_argument('--dropout', metavar='D', type=float, default=0.1, help='dropout probability')
@@ -45,7 +45,7 @@ args = parser.parse_args()
 # Make some preparations:
 
 log_filename = os.path.join(args.log, args.prefix + '.log')
-emb_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words.npy')
+emb_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words_poetry.npy')
 dump_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '.model')
 args_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '.args')
 bpe_model_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe.model')
@@ -81,11 +81,11 @@ else:
     embeddings = None
     vocab_size, emb_size = args.vocab_size, args.emb_size
 
-dic = create_dict('./dataset/train.tsv')
+dic = create_dict('./dataset/poetry_train.tsv')
 logging.info('Loading dataset')
 #loader = DataLoader(args.dataset, ['train', 'test'], ['src', 'trg'], bpe_model_filename)
-train_loader = LoadDataset('./dataset/train.tsv',dic)
-test_loader = LoadDataset('./dataset/test.tsv',dic)
+train_loader = LoadDataset('./dataset/poetry_train.tsv',dic)
+test_loader = LoadDataset('./dataset/poetry_test.tsv',dic)
 m_args = {'max_seq_len':50, 'vocab_size': vocab_size,
           'n_layers': args.n_layers, 'emb_size': emb_size, 'dim_m': args.model_dim, 'n_heads': args.n_heads,
           'dim_i': args.inner_dim, 'dropout': args.dropout, 'embedding_weights': embeddings}
