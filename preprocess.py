@@ -22,16 +22,16 @@ parser.add_argument('--prefix', metavar='P', type=str, default='gen', help='mode
 
 args = parser.parse_args()
 
-train_filename = os.path.join(args.dataset, 'train.tsv')
-test_filename = os.path.join(args.dataset, 'test.tsv')
+train_filename = os.path.join(args.dataset, 'peotry_train.tsv')
+test_filename = os.path.join(args.dataset, 'peotry_test.tsv')
 sp_model_prefix = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe')
 sp_model_filename = sp_model_prefix + '.model'
-embeddings_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words.npy')
+embeddings_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words_poetry.npy')
 
 
-#Next , using BERT embeddings:
+#Next, using BERT embeddings:
 from bert_serving.client import BertClient
-dic = create_dict('./dataset/train.tsv')
+dic = create_dict(train_filename)
 words = dic.word2id.keys()
 bc = BertClient()
 encoded_words = []
