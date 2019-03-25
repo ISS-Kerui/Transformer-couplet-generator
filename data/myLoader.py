@@ -114,11 +114,11 @@ class LoadDataset(Dataset):
             for output in outputs:
                 decoded_sentence = ''
                 decoded_id = []
-                for token in output:
+                for token in output.split():
                     if token == self.eos_idx:
                         break
                     decoded_id.append(token)
-                    decoded_sentence += id2word_dic.get(token)
+                    decoded_sentence +=id2word_dic.get(token)+' '
                 decoded_sentences.append(decoded_sentence)
                 decoded_id = [str(each_id) for each_id in decoded_id]
                 decoded_id = decoded_id[1:-1]
