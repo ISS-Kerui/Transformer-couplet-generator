@@ -21,15 +21,14 @@ parser = argparse.ArgumentParser(description=description, epilog=epilog,
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--dataset', metavar='DIR', type=str, default='./dataset', help='dataset directory')
 parser.add_argument('--cuda', action='store_true', help='whether to use cuda')
-parser.add_argument('--vocab_size', metavar='V', type=int, default=4000, help='vocabulary size')
 parser.add_argument('--pretrain_emb', action='store_true', help='use pretrained embeddings')
 parser.add_argument('--emb_size', metavar='E', type=int, default=768, help='embedding size')
 parser.add_argument('--model_dim', metavar='MD', type=int, default=768, help='dimension of the model')
-parser.add_argument('--n_layers', metavar='NL', type=int, default=2, help='number of transformer layers')
+parser.add_argument('--n_layers', metavar='NL', type=int, default=1, help='number of transformer layers')
 parser.add_argument('--n_heads', metavar='NH', type=int, default=8, help='number of attention heads')
 parser.add_argument('--inner_dim', metavar='ID', type=int, default=768, help='dimension of position-wise sublayer')
 parser.add_argument('--dropout', metavar='D', type=float, default=0.1, help='dropout probability')
-parser.add_argument('--learning_rate', metavar='LR', type=float, default=1e-3, help='learning rate')
+parser.add_argument('--learning_rate', metavar='LR', type=float, default=1e-4, help='learning rate')
 parser.add_argument('--epoch', metavar='IT', type=int, default=10, help='number of epoches')
 parser.add_argument('--train_bs', metavar='TR', type=int, default=64, help='train batch size')
 parser.add_argument('--test_bs', metavar='TE', type=int, default=16, help='test batch size')
@@ -45,7 +44,7 @@ args = parser.parse_args()
 # Make some preparations:
 
 log_filename = os.path.join(args.log, args.prefix + '.log')
-emb_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words_poetry.npy')
+emb_filename = os.path.join('./models_dumps', args.prefix, 'embedded_words.npy')
 dump_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '.model')
 args_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '.args')
 bpe_model_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe.model')
@@ -73,19 +72,19 @@ else:
 
 device = torch.device("cuda"  if args.cuda and torch.cuda.is_available() else "cpu")
 writer = SummaryWriter(os.path.join(args.log, args.prefix))
+
+dic = create_dict('./dataset/train.tsv')
+logging.info('Loading dataset')
 if args.pretrain_emb:
     embeddings = torch.from_numpy(np.load(emb_filename)).float()
     logging.info('Use vocabulary and embedding sizes from embedding dump.')
     vocab_size, emb_size = embeddings.shape
 else:
     embeddings = None
-    vocab_size, emb_size = args.vocab_size, args.emb_size
+    vocab_size, emb_size = len(dic), args.emb_size
 
-dic = create_dict('./dataset/poetry_train.tsv')
-logging.info('Loading dataset')
-#loader = DataLoader(args.dataset, ['train', 'test'], ['src', 'trg'], bpe_model_filename)
-train_loader = LoadDataset('./dataset/poetry_train.tsv',dic)
-test_loader = LoadDataset('./dataset/poetry_test.tsv',dic)
+train_loader = LoadDataset('./dataset/train.tsv',dic)
+test_loader = LoadDataset('./dataset/test.tsv',dic)
 m_args = {'max_seq_len':50, 'vocab_size': vocab_size,
           'n_layers': args.n_layers, 'emb_size': emb_size, 'dim_m': args.model_dim, 'n_heads': args.n_heads,
           'dim_i': args.inner_dim, 'dropout': args.dropout, 'embedding_weights': embeddings}

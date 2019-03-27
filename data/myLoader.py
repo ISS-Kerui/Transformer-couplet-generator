@@ -147,7 +147,7 @@ def create_dict(data_path):
         for text in texts: 
                 for token in text.split():
                         frequency[token] += 1 
-        texts = [[token for token in text.split() if frequency[token] > 10] for text in texts]
+        texts = [[token for token in text.split() if frequency[token] > 50] for text in texts]
         dic = MyDict(texts)
         print (len(dic))
         return dic
