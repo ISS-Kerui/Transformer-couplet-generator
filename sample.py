@@ -13,14 +13,14 @@ parser = argparse.ArgumentParser(description=description, formatter_class=argpar
 
 parser.add_argument('--inp', metavar='I', type=str, default='sample', help='name sample part of dataset')
 parser.add_argument('--out', metavar='O', type=str, default='./generated.txt', help='output file')
-parser.add_argument('--prefix', metavar='P', type=str, default='simple-summ', help='model prefix')
+parser.add_argument('--prefix', metavar='P', type=str, default='gen', help='model prefix')
 parser.add_argument('--dataset', metavar='D', type=str, default='./dataset', help='dataset folder')
-parser.add_argument('--limit', metavar='L', type=int, default=30, help='generation limit')
+parser.add_argument('--limit', metavar='D', type=int, default=30)
 
 args = parser.parse_args()
 
 bpe_model_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '_bpe.model')
-model_filename = os.path.join('./models_dumps', args.prefix, 'RL_50_based130.model')
+model_filename = os.path.join('./models_dumps', args.prefix, 'bert.model')
 model_args_filename = os.path.join('./models_dumps', args.prefix, args.prefix + '.args')
 emb_filename = os.path.join('./models_dumps', args.prefix, 'embedding.npy')
 
@@ -51,7 +51,11 @@ with torch.no_grad():
         summaries = np.array(list(summaries))
         sources = torch.from_numpy(sources)
         sources = sources.to(device)
-        summaries = torch.from_numpy(summaries)
+        try:
+            summaries = torch.from_numpy(summaries)
+        except:
+            print (summaries)
+            continue
         summaries = summaries.to(device)
         seq = model.sample(sources, args.limit)
         sum_words,sum_id = test_loader.decode(seq,dic.id2word)
@@ -62,6 +66,6 @@ with torch.no_grad():
         truth_id += ids
     with open(args.out, 'w') as f:
         f.write('\n'.join(summ_id))
-    with open('summary.txt','w') as f:
+    with open('gold.txt','w') as f:
         f.write('\n'.join(truth_id))
 
