@@ -58,7 +58,7 @@ class LoadDataset(Dataset):
 		data = list(map(lambda x: [self.sos_idx] + x + [self.eos_idx], data))
 		lens = [len(s) for s in data]
 		if tp == 'source':
-			max_len = 140
+			max_len = 50
 		elif tp == 'summary':
 			max_len = 32
 		for i, length in enumerate(lens):
@@ -121,7 +121,8 @@ class LoadDataset(Dataset):
                     decoded_sentence +=id2word_dic.get(token)+' '
                 decoded_sentences.append(decoded_sentence)
                 decoded_id = [str(each_id) for each_id in decoded_id]
-                decoded_id = decoded_id[1:-1]
+                #decoded_id = decoded_id[1:-1]
+                decoded_id = decoded_id[1:]
                 decoded_ids.append(' '.join(decoded_id))
             return decoded_sentences,decoded_ids
 
@@ -149,7 +150,6 @@ def create_dict(data_path):
                         frequency[token] += 1 
         texts = [[token for token in text.split() if frequency[token] > 50] for text in texts]
         dic = MyDict(texts)
-        print (len(dic))
         return dic
 
 from torch.utils.data import DataLoader

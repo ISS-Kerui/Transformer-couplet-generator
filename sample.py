@@ -7,7 +7,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from model import TransformerSummarizer
 from data.myLoader import LoadDataset, collate_fn, create_dict
-description = 'Utility for sampling summarization.'
+description = 'Utility for sampling couplets.'
 
 parser = argparse.ArgumentParser(description=description, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -15,7 +15,7 @@ parser.add_argument('--inp', metavar='I', type=str, default='sample', help='name
 parser.add_argument('--out', metavar='O', type=str, default='./generated.txt', help='output file')
 parser.add_argument('--prefix', metavar='P', type=str, default='gen', help='model prefix')
 parser.add_argument('--dataset', metavar='D', type=str, default='./dataset', help='dataset folder')
-parser.add_argument('--limit', metavar='D', type=int, default=30)
+parser.add_argument('--limit', metavar='L', type=int, default=30)
 
 args = parser.parse_args()
 

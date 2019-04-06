@@ -40,9 +40,19 @@ The dataset we used is collected by [wb14123](https://github.com/wb14123). This 
 
 **Step3:**
 
-`python preprocess.py`
+Download a Pre-trained BERT Model https://storage.googleapis.com/bert_models/2018_11_03/chinese_L-12_H-768_A-12.zip
 
 **Step4:**
+
+Start the BERT service: 
+
+`bert-serving-start -model_dir /tmp/chinese_L-12_H-768_A-12/  -num_worker=4` 
+
+**Step5:**
+
+`python preprocess.py`
+
+**Step6:**
 
 `python train.py --cuda --pretrain_emb`  
 

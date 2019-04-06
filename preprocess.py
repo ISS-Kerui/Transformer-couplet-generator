@@ -43,7 +43,3 @@ np.save(embeddings_filename,encoded_words)
 
 
 
-
-# Export embeddings into lookup table:
-#export_embeddings(embeddings_filename, sp, w2v_model)
-#logging.info('Embeddings have been saved into {}'.format(embeddings_filename))
